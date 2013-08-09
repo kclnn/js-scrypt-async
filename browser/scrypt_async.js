@@ -1311,72 +1311,260 @@ var scrypt = (function () {
             A[b + 7] = 1541459225
         }
 
-        function pf(b, e, c, d, f, h, g, i, j, m) {
-            var p = (nf.multiply(i, 0, g, 0), A[G >> 2]),
-                k = A[G + 4 >> 2];
-            if (0 < k >>> 0 | 0 == k >>> 0 & 1073741823 < p >>> 0) {
+        var m_pf_b, m_pf_e, m_pf_c, m_pf_d, m_pf_f, m_pf_h, m_pf_g, m_pf_i, m_pf_j, m_pf_m;
+        var m_pf_p, m_pf_k, m_pf_q, m_pf_p, m_pf_l, m_pf_iteration_d, m_pf_iteration_r;
+        var m_pf_callback_func;
+        var m_steps_per_iteration;
+        var m_total_steps;
+        var m_steps_done;
+        var m_progress_callback_func;
+        var m_total_rounds;
+        var m_rounds_done;
+
+        var m_timeout = 1;
+
+        function pf_async(my_b, my_e, my_c, my_d, my_f, my_h, my_g, my_i, my_j, my_m, callback_func, progress_callback_func, steps) {
+        	m_pf_b = my_b;
+        	m_pf_e = my_e;
+        	m_pf_c = my_c;
+        	m_pf_d = my_d;
+        	m_pf_f = my_f;
+        	m_pf_h = my_h;
+        	m_pf_g = my_g;
+        	m_pf_i = my_i;
+        	m_pf_j = my_j;
+        	m_pf_m = my_m;
+        	m_pf_callback_func = callback_func;
+
+        	m_total_rounds = my_i;
+        	m_rounds_done = 0;
+
+        	m_steps_per_iteration = my_f*2*my_i / steps;
+        	m_total_steps = my_f;
+        	m_progress_callback_func = progress_callback_func;
+
+
+
+            m_pf_p = (nf.multiply(m_pf_i, 0, m_pf_g, 0), A[G >> 2]);
+            m_pf_k = A[G + 4 >> 2];
+            if (0 < m_pf_k >>> 0 | 0 == m_pf_k >>> 0 & 1073741823 < m_pf_p >>> 0) {
                 return A[Ce >> 2] = 27, -1
             }
-            if (0 != ((nf.add(f, h, -1, -1), A[G >> 2]) & f | 0) | 0 != (A[G + 4 >> 2] & h | 0) | 0 == (f | 0) & 0 == (h | 0)) {
+            if (0 != ((nf.add(m_pf_f, m_pf_h, -1, -1), A[G >> 2]) & m_pf_f | 0) | 0 != (A[G + 4 >> 2] & m_pf_h | 0) | 0 == (m_pf_f | 0) & 0 == (m_pf_h | 0)) {
                 return A[Ce >> 2] = 22, -1
             }
-            do {
-                if (!(Math.floor(33554431 / (i >>> 0)) >>> 0 < g >>> 0 | 16777215 < g >>> 0) && !(0 < h >>> 0 | 0 == h >>> 0 & Math.floor(33554431 / (g >>> 0)) >>> 0 < f >>> 0)) {
-                    var q = g << 7,
-                        p = fe(q * i | 0);
-                    if (0 == (p | 0)) {
-                        return b = -1
+                if (!(Math.floor(33554431 / (m_pf_i >>> 0)) >>> 0 < m_pf_g >>> 0 | 16777215 < m_pf_g >>> 0) && !(0 < m_pf_h >>> 0 | 0 == m_pf_h >>> 0 & Math.floor(33554431 / (m_pf_g >>> 0)) >>> 0 < m_pf_f >>> 0)) {
+                    m_pf_q = m_pf_g << 7;
+                    m_pf_p = fe(m_pf_q * m_pf_i | 0);
+                    if (0 == (m_pf_p | 0)) {
+                        return m_pf_b = -1
                     }
-                    k = fe(g << 8);
-                    do {
-                        if (0 != (k | 0)) {
-                            var l = fe((nf.multiply(q, 0, f, h), A[G >> 2]));
-                            if (0 == (l | 0)) {
-                                qf(k)
+                    m_pf_k = fe(m_pf_g << 8);
+                        if (0 != (m_pf_k | 0)) {
+                            m_pf_l = fe((nf.multiply(m_pf_q, 0, m_pf_f, m_pf_h), A[G >> 2]));
+                            if (0 == (m_pf_l | 0)) {
+                                qf(m_pf_k)
                             } else {
-                                q = (i << 7) * g | 0;
-                                bj(b, e, c, d, 1, 0, p, q);
-                                c = 0 == (i | 0);
-                                a: do {
-                                    if (!c) {
-                                        for (var d = g << 7, r = 0;;) {
-                                            if (cj(p + d * r | 0, g, f, h, l, k), r = r + 1 | 0, (r | 0) == (i | 0)) {
-                                                break a
-                                            }
-                                        }
+                                m_pf_q = (m_pf_i << 7) * m_pf_g | 0;
+                                bj(m_pf_b, m_pf_e, m_pf_c, m_pf_d, 1, 0, m_pf_p, m_pf_q);
+                                m_pf_c = 0 == (m_pf_i | 0);
+
+
+                                    if (!m_pf_c) {
+                                    	m_pf_iteration_d = m_pf_g << 7, m_pf_iteration_r = 0;
+                                    	pf_async_iterate();
                                     }
-                                } while (0);
-                                bj(b, e, p, q, 1, 0, j, m);
-                                qf(l);
-                                qf(k);
-                                qf(p);
-                                return b = 0
+                                return 0;
                             }
                         }
-                    } while (0);
-                    qf(p);
-                    return b = -1
+                    qf(m_pf_p);
+                    return m_pf_b = -1
                 }
-            } while (0);
             A[Ce >> 2] = 12;
             return -1
         }
-        Module._crypto_scrypt = pf;
-        pf.X = 1;
+        Module._crypto_scrypt_async = pf_async;
+        pf_async.X = 1;
 
-        function cj(b, e, c, d, f, h) {
-            var g = e << 7,
-                i = h + g | 0;
-            kf(h, b, g);
-            if (!(0 == (c | 0) & 0 == (d | 0))) {
-                for (var j = 0, m = 0; !(kf(f + (nf.multiply(m, j, g, 0), A[G >> 2]) | 0, h, g), dj(h, i, e), m = (nf.add(m, j, 1, 0), A[G >> 2]), j = A[G + 4 >> 2], !(j >>> 0 < d >>> 0 | j >>> 0 == d >>> 0 & m >>> 0 < c >>> 0));) {}
-                if (!(0 == (c | 0) & 0 == (d | 0))) {
-                    for (var j = (nf.add(c, d, -1, -1), A[G >> 2]), m = A[G + 4 >> 2], p = 0, k = 0; !(lf(h, f + (nf.multiply(mf(h + ((e << 7) - 64) | 0) & j, Nd & m, g, 0), A[G >> 2]) | 0, g), dj(h, i, e), k = (nf.add(k, p, 1, 0), A[G >> 2]), p = A[G + 4 >> 2], !(p >>> 0 < d >>> 0 | p >>> 0 == d >>> 0 & k >>> 0 < c >>> 0));) {}
-                }
-            }
-            kf(b, h, g)
+        function pf_async_iterate()
+        {
+        	cj_async(m_pf_p + m_pf_iteration_d * m_pf_iteration_r | 0, m_pf_g, m_pf_f, m_pf_h, m_pf_l, m_pf_k);
+		}
+
+		function pf_async_reiterate()
+		{
+			if ( m_pf_iteration_r = m_pf_iteration_r + 1 | 0, (m_pf_iteration_r | 0) == (m_pf_i | 0))
+			{
+				pf_async_after_iteration();
+				return;
+			}
+			else
+			{
+				pf_async_iterate();
+			}
+		}
+
+		function pf_async_after_iteration()
+		{
+			 bj(m_pf_b, m_pf_e, m_pf_p, m_pf_q, 1, 0, m_pf_j, m_pf_m);
+             qf(m_pf_l);
+             qf(m_pf_k);
+             qf(m_pf_p);
+             m_pf_callback_func(m_pf_b = 0);
         }
-        cj.X = 1;
+
+        var m_b, m_e, m_c, m_d, m_f, m_h, m_g, m_i, m_j, m_m, m_p, m_k;
+
+        function cj_async(l_b, l_e, l_c, l_d, l_f, l_h) {
+        	m_b = l_b;
+        	m_e = l_e;
+        	m_c = l_c;
+        	m_d = l_d;
+        	m_f = l_f;
+        	m_h = l_h;
+
+            m_g = m_e << 7;
+            m_i = m_h + m_g | 0;
+
+            kf(m_h, m_b, m_g);
+            if (!(0 == (m_c | 0) & 0 == (m_d | 0))) {
+	            var iters1 = 0, iters2 = 0;
+	            m_j = 0;
+	            m_m = 0;
+	            m_steps_done = 0;
+	            setTimeout(cj_iter1, m_timeout);
+	            return;
+            }
+            cj_finish();
+        }
+        cj_async.X = 1;
+
+        function cj_iter1()
+        {
+
+        	for (counter = 0; counter < m_steps_per_iteration; counter++)
+        	{
+        		if (!(kf(m_f + (nf.multiply(m_m, m_j, m_g, 0), A[G >> 2]) | 0, m_h, m_g), dj(m_h, m_i, m_e), m_m = (nf.add(m_m, m_j, 1, 0), A[G >> 2]), m_j = A[G + 4 >> 2], !(m_j >>> 0 < m_d >>> 0 | m_j >>> 0 == m_d >>> 0 & m_m >>> 0 < m_c >>> 0)))
+        		{
+        			continue;
+        		}
+        		cj_after_iter1();
+        		return;
+        	}
+        	m_steps_done += m_steps_per_iteration;
+        	m_progress_callback_func(((m_steps_done/m_total_steps)*50 + 100*m_rounds_done)/m_total_rounds);
+        	setTimeout(cj_iter1, m_timeout);
+        }
+
+        function cj_after_iter1()
+        {
+        	if (!(0 == (m_c | 0) & 0 == (m_d | 0))) {
+
+                    m_j = (nf.add(m_c, m_d, -1, -1), A[G >> 2]);
+                    m_m = A[G + 4 >> 2];
+                    m_p = 0;
+                    m_k = 0;
+                    m_progress_callback_func((50 + 100*m_rounds_done)/m_total_rounds);
+                    m_steps_done = 0;
+                    setTimeout(cj_iter2, m_timeout);
+                	return;
+                }
+            cj_finish();
+		}
+        function cj_finish()
+        {
+        	m_rounds_done++;
+        	if (m_rounds_done != m_total_rounds)
+        	{
+        		m_progress_callback_func(100*m_rounds_done/m_total_rounds);
+        	}
+        	kf(m_b, m_h, m_g);
+        	pf_async_reiterate();
+
+        }
+
+        function cj_iter2()
+        {
+        	for (counter = 0; counter < m_steps_per_iteration; counter++)
+        	{
+	        	if (!(lf(m_h, m_f + (nf.multiply(mf(m_h + ((m_e << 7) - 64) | 0) & m_j, Nd & m_m, m_g, 0), A[G >> 2]) | 0, m_g), dj(m_h, m_i, m_e), m_k = (nf.add(m_k, m_p, 1, 0), A[G >> 2]), m_p = A[G + 4 >> 2], !(m_p >>> 0 < m_d >>> 0 | m_p >>> 0 == m_d >>> 0 & m_k >>> 0 < m_c >>> 0)))
+    	    	{
+        			continue;
+        		}
+        		cj_finish();
+        		return;
+        	}
+        	m_steps_done += m_steps_per_iteration;
+        	m_progress_callback_func((50 + (m_steps_done/m_total_steps)*50 + 100*m_rounds_done)/m_total_rounds);
+        	setTimeout(cj_iter2, m_timeout);
+        }
+
+        function pf(b, e, c, d, f, h, g, i, j, m) {
+	        var p = (nf.multiply(i, 0, g, 0), A[G >> 2]),
+	            k = A[G + 4 >> 2];
+	        if (0 < k >>> 0 | 0 == k >>> 0 & 1073741823 < p >>> 0) {
+    	        return A[Ce >> 2] = 27, -1
+	        }
+	        if (0 != ((nf.add(f, h, -1, -1), A[G >> 2]) & f | 0) | 0 != (A[G + 4 >> 2] & h | 0) | 0 == (f | 0) & 0 == (h | 0)) {
+	            return A[Ce >> 2] = 22, -1
+	        }
+	        do {
+	            if (!(Math.floor(33554431 / (i >>> 0)) >>> 0 < g >>> 0 | 16777215 < g >>> 0) && !(0 < h >>> 0 | 0 == h >>> 0 & Math.floor(33554431 / (g >>> 0)) >>> 0 < f >>> 0)) {
+	                var q = g << 7,
+	                    p = fe(q * i | 0);
+	                if (0 == (p | 0)) {
+	                    return b = -1
+	                }
+	                k = fe(g << 8);
+	                do {
+	                    if (0 != (k | 0)) {
+	                        var l = fe((nf.multiply(q, 0, f, h), A[G >> 2]));
+	                        if (0 == (l | 0)) {
+	                            qf(k)
+	                        } else {
+	                            q = (i << 7) * g | 0;
+	                            bj(b, e, c, d, 1, 0, p, q);
+	                            c = 0 == (i | 0);
+	                            a: do {
+	                                if (!c) {
+	                                    for (var d = g << 7, r = 0;;) {
+	                                        if (cj(p + d * r | 0, g, f, h, l, k), r = r + 1 | 0, (r | 0) == (i | 0)) {
+	                                            break a
+	                                        }
+	                                    }
+	                                }
+	                            } while (0);
+	                            bj(b, e, p, q, 1, 0, j, m);
+	                            qf(l);
+	                            qf(k);
+	                            qf(p);
+	                            return b = 0
+	                        }
+	                    }
+	                } while (0);
+	                qf(p);
+	                return b = -1
+	            }
+	        } while (0);
+	        A[Ce >> 2] = 12;
+	        return -1
+	    }
+	    Module._crypto_scrypt = pf;
+	    pf.X = 1;
+	
+	    function cj(b, e, c, d, f, h) {
+	        var g = e << 7,
+	            i = h + g | 0;
+	        kf(h, b, g);
+	        if (!(0 == (c | 0) & 0 == (d | 0))) {
+	            for (var j = 0, m = 0; !(kf(f + (nf.multiply(m, j, g, 0), A[G >> 2]) | 0, h, g), dj(h, i, e), m = (nf.add(m, j, 1, 0), A[G >> 2]), j = A[G + 4 >> 2], !(j >>> 0 < d >>> 0 | j >>> 0 == d >>> 0 & m >>> 0 < c >>> 0));) 	{}
+	            if (!(0 == (c | 0) & 0 == (d | 0))) {
+	                for (var j = (nf.add(c, d, -1, -1), A[G >> 2]), m = A[G + 4 >> 2], p = 0, k = 0; !(lf(h, f + (nf.multiply(mf(h + ((e << 7) - 64) | 0) & j, Nd & m, g, 0), A[G >> 2]) | 0, g), dj(h, i, e), k = (nf.add(k, p, 1, 0), A[G >> 2]), p = A[G + 4 >> 2], !(p >>> 0 < d >>> 0 | p >>> 0 == d >>> 0 & k >>> 0 < c >>> 0));) {}
+	            }
+	        }
+	        kf(b, h, g)
+	    }
+	    cj.X = 1;
 
         function dj(b, e, c) {
             var d = y;
@@ -4515,6 +4703,7 @@ var scrypt = (function () {
 
 
 
+
 var scrypt = (function () {
     var exports = {};
 
@@ -4631,6 +4820,54 @@ var scrypt = (function () {
 
     //---------------------------------------------------------------------------
 
+    var m_async_running = false;
+    var m_async_buf, m_async_pa, m_async_sa, m_async_callback_func;
+    function crypto_scrypt_async(passwd, salt, n, r, p, buflen, callback_func, progress_callback_func, numsteps) {
+	    if (m_async_running)
+	    {
+	    	return null;
+	    }
+	    m_async_running = true;
+
+		m_async_buf = new Target(buflen);
+		m_async_pa = injectBytes(passwd);
+		m_async_sa = injectBytes(salt);
+		m_async_callback_func = callback_func;
+
+		var result = scrypt_raw._crypto_scrypt_async(m_async_pa, passwd.length,
+						m_async_sa, salt.length,
+						n, 0, // 64 bits; zero upper half
+						r,
+						p,
+						m_async_buf.address, m_async_buf.length, crypto_scrypt_async_finished_callback, progress_callback_func, numsteps);
+		if (result !== 0)
+		{
+			// error
+			crypto_scrypt_async_cleanup();
+		}
+		return result;
+    }
+
+    function crypto_scrypt_async_cleanup()
+    {
+    	free_all([m_async_pa, m_async_sa]);
+		m_async_running = false;
+	}
+    function crypto_scrypt_async_finished_callback(result)
+    {
+    	if (result === 0)
+    	{
+    		m_async_callback_func(result, m_async_buf.extractBytes());
+    	}
+    	else
+    	{
+    		m_async_callback_func(result, "");
+    	}
+    	crypto_scrypt_async_cleanup();
+    }
+
+    //---------------------------------------------------------------------------
+
     exports.encode_utf8 = encode_utf8;
     exports.encode_latin1 = encode_latin1;
     exports.decode_utf8 = decode_utf8;
@@ -4638,6 +4875,7 @@ var scrypt = (function () {
     exports.to_hex = to_hex;
 
     exports.crypto_scrypt = crypto_scrypt;
+    exports.crypto_scrypt_async = crypto_scrypt_async;
 
     return exports;
 })();

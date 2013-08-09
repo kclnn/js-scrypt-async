@@ -2,10 +2,19 @@
 <html>
   <head>
     <title>Testing scrypt in the browser</title>
-    <script src="browser/scrypt.js"></script>
+    <style type="text/css">
+      thead {font-weight:bold;}
+      td {border: 1px solid #aaa; padding:1em;}
+      table {border-collapse:collapse;}
+  	</style>
+    <script src="browser/scrypt_async.js"></script>
     <script src="test_scrypt_browser.js"></script>
   </head>
   <body>
+  <div id="topdiv"></div><br />
+  <div>Async steps: <input type="text" id="asyncsteps" value="10" size="3" /><button onclick="set_async_steps(10);">10</button><button onclick="set_async_steps(20);">20</button><button onclick="set_async_steps(100);">100</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Async Progress: <span id="progress">-</span></div>
+  <button onclick="clear_output();">Clear output</button>
     <pre id="output"></pre>
+
   </body>
 </html>
