@@ -18,6 +18,11 @@ This library was written in order to interoperate with
 [js-nacl](https://github.com/tonyg/js-nacl), a cryptographic toolkit
 library.
 
+This fork of the [original js-scrypt](https://github.com/tonyg/js-scrypt)
+adds support for asynchronous key derivation by hacking some iterative
+structure combined with JavaScript timeouts into the Emscripten-compiled
+code.
+
 ## Building the library
 
 The git checkout includes a pre-compiled version of the library, so
@@ -27,13 +32,10 @@ the underlying library itself or how it is compiled.
 Essentially, the source checkout contains everything you will need to
 use the library in the browser.
 
-## Using the library
+Note that the JavaScript files have been modified for asynchronism.
+This means that you won't be able directly compile the `browser/scrypt_async.js`
+file with Emscripten.
 
-In the browser, include the `browser/scrypt.js` script:
-
-    <script src="browser/scrypt.js"></script>
-    ...
-    <script> alert(scrypt.to_hex(scrypt.random_bytes(16))); </script>
 
 ## Strings vs. Binary Data
 
@@ -108,12 +110,60 @@ produces 64 bytes of key material,
 
 as a `Uint8Array`.
 
+## Using `crypto_scrypt_async`
+
+The asynchronous function has the same parameters as `crypto_scrypt`,
+plus:
+
+ - a result callback function `callback_result(success, result)`, which
+   gets called at the end of the computation. *success* is 0 if everything
+   went well and *result* then contains the key material as a `Uint8Array`.
+
+ - a progress callback function `callback_progress(progress)`, which gets
+   called after every iteration step. *progress* is a number between 0 and
+   100, indicating the progress of the key derivation procedure.
+
+ - a parameter *asyncSteps* that sets the number of steps into which the
+   key derivation procedure should be divided. A higher number leads to
+   more calls of the progress function and less browser lag, but also
+   increases overhead and overall runtime. You will want to find a good
+   balance between a smooth feel and a total runtime that doen't exceed
+   the synchronous runtime too much, depending on the parameters and the
+   application. You can try this out using `test_scrypt_browser.html`.
+   Note that the number of steps will implicitly always be divisible by
+   (2 *p*), so the actual number of steps may differ from the one specified
+   here.
+   
+`crypto_scrypt_async` returns `0` if the procedure was successfully started,
+`null` if it could not be started because another asynchronous key derivation 
+is in progress (use `===`-check!). Other return values indicate errors 
+inside the actual procedure, for example invalid input parameters.
+
+Therefore we have
+
+    var success = scrypt.crypto_scrypt_async(password, salt, N, r, p, L,
+        callback_result, callback_progress, asyncSteps);
+   
+For example,
+
+    scrypt.crypto_scrypt_async(scrypt.encode_utf8("pleaseletmein"),
+        scrypt.encode_utf8("SodiumChloride"),
+        16384, 8, 1, 64,
+        function(success, result){output.innerHTML = scrypt.to_hex(result);},
+        function(progress){output.innerHTML = progress;},
+        20)
+
+produces the same 64 bytes as the example above and writes them into
+an output element (which has to be specified before). This is done in
+20 steps. After each step, the output element is updated with a progress
+percentage.
+
 ## License
 
 js-scrypt is written by Tony Garnock-Jones
 <tonygarnockjones@gmail.com> and is licensed under the [2-clause BSD license](http://opensource.org/licenses/BSD-2-Clause):
 
-> Copyright &copy; 2013, Tony Garnock-Jones  
+> Copyright &copy; 2013, Tony Garnock-Jones
 > All rights reserved.
 >
 > Redistribution and use in source and binary forms, with or without
@@ -144,7 +194,7 @@ js-scrypt is written by Tony Garnock-Jones
 js-scrypt relies on `scrypt` itself, which is written by Colin
 Percival and licensed as follows:
 
-> Copyright 2009 Colin Percival  
+> Copyright 2009 Colin Percival
 > All rights reserved.
 >
 > Redistribution and use in source and binary forms, with or without
