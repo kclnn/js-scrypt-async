@@ -1,3 +1,12 @@
+This fork of the [original js-scrypt](https://github.com/tonyg/js-scrypt)
+adds support for asynchronous key derivation by hacking some iterative
+structure combined with JavaScript timeouts into the Emscripten-compiled
+code.
+
+For context, the readme of js-scrypt follows. For details on the asynchronous
+feature, check the section "Using `crypto_scrypt_async`".
+
+
 # js-scrypt: Pure-Javascript Emscripten-compiled scrypt routine
 
 [Emscripten](https://github.com/kripken/emscripten)-compiled
@@ -18,10 +27,6 @@ This library was written in order to interoperate with
 [js-nacl](https://github.com/tonyg/js-nacl), a cryptographic toolkit
 library.
 
-This fork of the [original js-scrypt](https://github.com/tonyg/js-scrypt)
-adds support for asynchronous key derivation by hacking some iterative
-structure combined with JavaScript timeouts into the Emscripten-compiled
-code.
 
 ## Building the library
 
